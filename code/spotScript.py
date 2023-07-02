@@ -185,7 +185,7 @@ def main():
                 new_cover_art_url = get_cover_art(song["track_id"], access_token)
                 if new_cover_art_url != cover_art_url:
                     # Close the existing image display
-                    subprocess.run(["killall", "fbi"])
+                    subprocess.run(["sudo","killall", "fbi"])
 
                     # Display the new cover art
                     display_cover_art(new_cover_art_url)

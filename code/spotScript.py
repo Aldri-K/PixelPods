@@ -132,7 +132,7 @@ def display_cover_art(cover_art_url):
         return
 
     # Display the image using fbi with additional arguments
-    subprocess.run(["fbi", "-d", "/dev/fb0", "-T", "1", "-noverbose", "-a", image_file])
+    subprocess.run(["sudo","fbi", "-d", "/dev/fb0", "-T", "1", "-noverbose", "-a", image_file])
 
 
 

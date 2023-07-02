@@ -1,72 +1,73 @@
+from dotenv import load_dotenv
 import os
 import base64
 import requests
 import json
 import time
-
-from dotenv import load_dotenv
-
-load_dotenv()
-
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-REDIRECT_URI = "http://localhost:8000/callback"
-SCOPE = "user-read-currently-playing"
-AUTHORIZATION_URL = "https://accounts.spotify.com/authorize"
-TOKEN_URL = "https://accounts.spotify.com/api/token"
-API_BASE_URL = "https://api.spotify.com/v1"
-
-access_token = os.getenv("ACCESS_TOKEN")
-refresh_token = os.getenv("REFRESH_TOKEN")
+from urllib import request
+import subprocess
 
 
 def get_authorization_request_url(client_id):
+    authorization_url = "https://accounts.spotify.com/authorize"
     query_params = {
         "client_id": client_id,
         "response_type": "code",
-        "redirect_uri": REDIRECT_URI,
-        "scope": SCOPE,
+        "redirect_uri": "http://localhost:8000/callback",
+        "scope": "user-read-currently-playing"
     }
-    authorization_request_url = f"{AUTHORIZATION_URL}?{'&'.join([f'{key}={value}' for key, value in query_params.items()])}"
+    authorization_request_url = f"{authorization_url}?{'&'.join([f'{key}={value}' for key, value in query_params.items()])}"
+    print(f"Please grant access to your Spotify account by visiting the following URL:\n{authorization_request_url}\n")
+
     return authorization_request_url
 
 
-def get_tokens(authorization_code):
+def exchange_authorization_code_for_token(client_id, client_secret, authorization_code):
+    token_url = "https://accounts.spotify.com/api/token"
+    auth_header = f"{client_id}:{client_secret}"
+    auth_header_b64 = base64.b64encode(auth_header.encode()).decode()
+    headers = {
+        "Authorization": f"Basic {auth_header_b64}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
     data = {
         "grant_type": "authorization_code",
         "code": authorization_code,
-        "redirect_uri": REDIRECT_URI,
+        "redirect_uri": "http://localhost:8000/callback"
     }
-    headers = {
-        "Authorization": f"Basic {base64.b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()}",
-    }
+    response = requests.post(token_url, headers=headers, data=data)
 
-    response = requests.post(TOKEN_URL, headers=headers, data=data)
-
+    # Extract access token and refresh token from response
     if response.status_code == 200:
         response_data = response.json()
         access_token = response_data["access_token"]
         refresh_token = response_data["refresh_token"]
+        print("Access token obtained successfully.")
         return access_token, refresh_token
     else:
         print(f"Error: {response.status_code} - {response.text}")
         return None, None
 
 
-def refresh_access_token(refresh_token):
+def refresh_access_token(refresh_token, client_id, client_secret):
+    token_url = "https://accounts.spotify.com/api/token"
+    auth_header = f"{client_id}:{client_secret}"
+    auth_header_b64 = base64.b64encode(auth_header.encode()).decode()
+    headers = {
+        "Authorization": f"Basic {auth_header_b64}",
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
     data = {
         "grant_type": "refresh_token",
-        "refresh_token": refresh_token,
+        "refresh_token": refresh_token
     }
-    headers = {
-        "Authorization": f"Basic {base64.b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()}",
-    }
+    response = requests.post(token_url, headers=headers, data=data)
 
-    response = requests.post(TOKEN_URL, headers=headers, data=data)
-
+    # Extract refreshed access token from response
     if response.status_code == 200:
         response_data = response.json()
         access_token = response_data["access_token"]
+        print("Access token refreshed successfully.")
         return access_token
     else:
         print(f"Error: {response.status_code} - {response.text}")
@@ -77,63 +78,102 @@ def get_current_song(access_token):
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
-    response = requests.get(f"{API_BASE_URL}/me/player/currently-playing", headers=headers)
+    response = requests.get("https://api.spotify.com/v1/me/player/currently-playing", headers=headers)
 
+    # Extract information about user's current playing song from response
     if response.status_code == 200:
-        track_data = response.json()["item"]
-        artists = [artist["name"] for artist in track_data["artists"]]
-        album_name = track_data["album"]["name"]
+        track_id = response.json()["item"]["id"]
+        track_name = response.json()["item"]["name"]
+        artists = [artist["name"] for artist in response.json()["item"]["artists"]]
+        album_name = response.json()["item"]["album"]["name"]
         cur_song = {
-            "track_id": track_data["id"],
-            "track_name": track_data["name"],
+            "track_id": track_id,
+            "track_name": track_name,
             "artists": artists,
-            "album_name": album_name,
+            "album_name": album_name
         }
-        print(f"You are currently playing: {cur_song['track_name']} by {', '.join(cur_song['artists'])} from the album {cur_song['album_name']}")
-        return cur_song
+        print(f"You are currently playing: {track_name} by {', '.join(artists)} from the album {album_name}")
     else:
         print(f"Error: {response.status_code} - {response.text}")
-        return None
+        cur_song = None
+
+    return cur_song
 
 
 def get_cover_art(track_id, access_token):
     headers = {
         "Authorization": f"Bearer {access_token}"
     }
-    response = requests.get(f"{API_BASE_URL}/tracks/{track_id}", headers=headers)
+    response = requests.get(f"https://api.spotify.com/v1/tracks/{track_id}", headers=headers)
 
+    # Extract cover art URL from track information
     if response.status_code == 200:
-        album_data = response.json()["album"]
-        cover_art_url = album_data["images"][0]["url"]
-        print(f"Album cover art for '{album_data['name']}' by {', '.join([artist['name'] for artist in album_data['artists']])}: {cover_art_url}")
+        cover_art_url = response.json()["album"]["images"][0]["url"]
+        print(f"Album cover art URL: {cover_art_url}")
         return cover_art_url
     else:
         print(f"Error: {response.status_code} - {response.text}")
         return None
 
 
-def save_tokens(access_token, refresh_token):
-    with open(".env", "a") as file:
+def display_cover_art(cover_art_url):
+    if not cover_art_url:
+        return
+
+    image_file = "/tmp/cover.jpg"
+
+    # Download the cover art image
+    response = requests.get(cover_art_url)
+    if response.status_code == 200:
+        with open(image_file, "wb") as file:
+            file.write(response.content)
+    else:
+        print(f"Error: {response.status_code} - Failed to download cover art")
+        return
+
+    # Display the image using fbi
+    subprocess.run(["fbi", "-noverbose", "-a", image_file])
+
+
+def create_dotenv_file(client_id, client_secret, access_token, refresh_token):
+    with open(".env", "w") as file:
+        file.write(f"CLIENT_ID={client_id}\n")
+        file.write(f"CLIENT_SECRET={client_secret}\n")
         file.write(f"ACCESS_TOKEN={access_token}\n")
         file.write(f"REFRESH_TOKEN={refresh_token}\n")
 
 
+def load_dotenv_file():
+    if not os.path.exists(".env"):
+        return False
+
+    load_dotenv(".env")
+    return True
+
+
 def main():
-    global access_token
-    global refresh_token
+    client_id = "YOUR_CLIENT_ID"
+    client_secret = "YOUR_CLIENT_SECRET"
 
-    if access_token is None or refresh_token is None:
-        authorization_request_url = get_authorization_request_url(CLIENT_ID)
-        print(f"Please grant access to your Spotify account by visiting the following URL:\n{authorization_request_url}\n")
+    # Load tokens from .env file if it exists
+    dotenv_loaded = load_dotenv_file()
+
+    if dotenv_loaded:
+        access_token = os.getenv("ACCESS_TOKEN")
+        refresh_token = os.getenv("REFRESH_TOKEN")
+        print("Tokens loaded from .env file.")
+    else:
+        # No .env file found, prompt for authorization
+        auth_request_url = get_authorization_request_url(client_id)
         authorization_code = input("Enter the authorization code provided by Spotify: ")
+        access_token, refresh_token = exchange_authorization_code_for_token(client_id, client_secret, authorization_code)
 
-        access_token, refresh_token = get_tokens(authorization_code)
-        if access_token is None or refresh_token is None:
-            return
+        # Store tokens in .env file
+        create_dotenv_file(client_id, client_secret, access_token, refresh_token)
 
-        save_tokens(access_token, refresh_token)
-
+    # Track the current song and cover art URL
     song = None
+    cover_art_url = None
 
     while True:
         current_song = get_current_song(access_token)
@@ -141,10 +181,16 @@ def main():
         if current_song != song:
             song = current_song
             if song:
-                cover_art_url = get_cover_art(song["track_id"], access_token)
-                # Perform any other actions with the song data or cover art URL here
+                new_cover_art_url = get_cover_art(song["track_id"], access_token)
+                if new_cover_art_url != cover_art_url:
+                    # Close the existing image display
+                    subprocess.run(["killall", "fbi"])
 
-        access_token = refresh_access_token(refresh_token)
+                    # Display the new cover art
+                    display_cover_art(new_cover_art_url)
+                    cover_art_url = new_cover_art_url
+
+        # Wait for some time before checking the current song again
         time.sleep(5)
 
 

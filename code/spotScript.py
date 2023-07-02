@@ -131,8 +131,9 @@ def display_cover_art(cover_art_url):
         print(f"Error: {response.status_code} - Failed to download cover art")
         return
 
-    # Display the image using fbi
-    subprocess.run(["fbi", "-noverbose", "-a", image_file])
+    # Display the image using fbi with additional arguments
+    subprocess.run(["fbi", "-d", "/dev/fb0", "-T", "1", "-noverbose", "-a", image_file])
+
 
 
 def create_dotenv_file(client_id, client_secret, access_token, refresh_token):

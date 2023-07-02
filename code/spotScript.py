@@ -149,7 +149,7 @@ def refresh_access_token(client_id, client_secret, refresh_token):
 
 def display_cover_art(image_url):
     # Close the existing fbi process if it's running
-    subprocess.run(["sudo", "pkill", "-f", "fbi"])
+    # subprocess.run(["sudo", "pkill", "-f", "fbi"])
 
     # Display the cover art using fbi
     subprocess.run(["sudo", "fbi", "-d", "/dev/fb0", "-T", "1", image_url])

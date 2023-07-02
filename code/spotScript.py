@@ -149,10 +149,10 @@ def refresh_access_token(client_id, client_secret, refresh_token):
 
 def display_cover_art(image_url):
     # Close the existing fbi process if it's running
-    # subprocess.run(["sudo", "pkill", "-f", "fbi"])
+    subprocess.run(["pkill", "-f", "fbi"])
 
     # Display the cover art using fbi
-    subprocess.run(["sudo", "fbi", "-d", "/dev/fb0", "-T", "1", image_url])
+    subprocess.run(["fbi", "-d", "/dev/fb0", "-T", "1", image_url])
 
 
 def main():
@@ -164,8 +164,7 @@ def main():
 
     if not client_id or not client_secret or not access_token or not refresh_token:
         # No tokens found, perform authorization
-        client_id = input("Enter your Spotify client ID: ")
-        auth_request_url = get_authorization_request_url(client_id)
+        auth_request_url = get_authorization_request_url("YOUR_CLIENT_ID")
         authorization_code = input("Enter the authorization code provided by Spotify: ")
         access_token, refresh_token = exchange_authorization_code_for_token(client_id, client_secret, authorization_code)
         create_dotenv_file(client_id, client_secret, access_token, refresh_token)
@@ -185,6 +184,8 @@ def main():
                 cover_art_url = get_cover_art(song["track_id"], access_token)
                 if cover_art_url:
                     display_cover_art(cover_art_url)
+
+        time.sleep(5)
 
 
 if __name__ == "__main__":

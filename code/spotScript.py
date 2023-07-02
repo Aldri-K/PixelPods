@@ -192,7 +192,7 @@ def main():
                     cover_art_url = new_cover_art_url
 
         # Wait for some time before checking the current song again
-        time.sleep(5)
+        time.sleep(1)
 
 
 if __name__ == "__main__":

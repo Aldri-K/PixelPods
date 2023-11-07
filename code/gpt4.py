@@ -86,22 +86,39 @@ def create_window():
     return sg.Window('Spotify Viewer', layout, finalize=True)
 
 def play_video(video_path):
-    vlc_instance = vlc.Instance("--loop")  # Enable looping
+    vlc_instance = vlc.Instance()
     player = vlc_instance.media_player_new()
     media = vlc_instance.media_new(video_path)
+    media.get_mrl()
     player.set_media(media)
+
+    # Play the video
     player.play()
+    
+    # Wait for the player to start playing
+    time.sleep(0.1)
 
-    # Check the current track and loop until it changes
     global last_track_id
+
+    # Loop the video until the track changes
     while True:
-        time.sleep(1)  # Check every second
+        time.sleep(1)  # Don't hog the CPU
+
+        # Check if the song has been updated
         currently_playing = sp.current_playback()
-        if currently_playing is None or currently_playing["item"]["id"] != last_track_id:
-            break  # Stop the loop if the song has changed
+        if not currently_playing or currently_playing["item"]["id"] != last_track_id:
+            break  # Break the loop if the song has changed
 
-    player.stop()  # Stop the player once the song changes
+        # If playback has ended, restart it
+        if player.get_state() == vlc.State.Ended:
+            player.stop()
+            player.play()
 
+    # Stop the video when the track changes
+    player.stop()
+    player.release()  # Release the player
+
+    
 def display_image_with_pygui(window, image_path):
     image = Image.open(image_path)
     bio = BytesIO()

@@ -8,6 +8,8 @@ import PySimpleGUI as sg
 import vlc
 from PIL import Image
 from io import BytesIO
+import platform
+
 
 # Load environment variables
 from dotenv import load_dotenv
@@ -76,31 +78,43 @@ def download_canvas_video(track_name, track_link):
     else:
         return None
 
-def play_video(window, video_path):
-    # This function now takes the PySimpleGUI window as an argument
-    vlc_instance = vlc.Instance()
+def create_window():
+    layout = [
+        [sg.Image(key='-IMAGE-')],
+        [sg.Canvas(key='-VIDEO-')]
+    ]
+    return sg.Window('Spotify Viewer', layout, finalize=True)
+
+def play_video(video_path):
+    vlc_instance = vlc.Instance("--loop")  # Enable looping
     player = vlc_instance.media_player_new()
     media = vlc_instance.media_new(video_path)
-    media.get_mrl()
     player.set_media(media)
-    player.set_hwnd(window['-VIDEO-'].Widget.winfo_id())  # Pass the drawing area handle to VLC
     player.play()
+
+    # Check the current track and loop until it changes
+    global last_track_id
+    while True:
+        time.sleep(1)  # Check every second
+        currently_playing = sp.current_playback()
+        if currently_playing is None or currently_playing["item"]["id"] != last_track_id:
+            break  # Stop the loop if the song has changed
+
+    player.stop()  # Stop the player once the song changes
 
 def display_image_with_pygui(window, image_path):
     image = Image.open(image_path)
     bio = BytesIO()
-    image.save(bio, format="PNG")  # Use Pillow to convert the image to a format PySimpleGUI can handle
+    image.save(bio, format="PNG")
     window['-IMAGE-'].update(data=bio.getvalue())
 
-# Define the window layout
+# Define the window layout for images
 layout = [
     [sg.Image(key='-IMAGE-')],
-    [sg.Canvas(key='-VIDEO-')]
 ]
 
-# Create the window
-window = sg.Window('Spotify Viewer', layout, finalize=True)
-
+# Create the window for images
+window = sg.Window('Spotify Image Viewer', layout, finalize=True)
 while True:
     update_display = False  # Reset the flag at the beginning of the loop
     try:
@@ -110,20 +124,22 @@ while True:
             track_id = track["id"]
             if track_id != last_track_id:
                 clear_directory(downloads_dir)  # Clear the downloads directory for a new track
-                update_display = True  # Set the flag to signal the update
                 last_track_id = track_id
                 album = track["album"]
                 track_link = track["external_urls"]["spotify"]
                 print(f"Listening to: {track['name']} - {track_link}")
                 video_path = download_canvas_video(track["name"], track_link)
                 if video_path:
-                    play_video(window, video_path)
+                    window.Hide()  # Hide the image window
+                    play_video(video_path)
+                    window.UnHide()  # Show the image window again
                 else:
                     image_url = get_best_image(album["images"])
                     download_path = os.path.join(downloads_dir, track_id + ".jpg")
                     download_image(image_url, download_path)
                     display_image_with_pygui(window, download_path)
-        # Event handling
+
+        # Event handling for PySimpleGUI window
         event, values = window.read(timeout=100)  # Poll every 100 ms
         if event == sg.WIN_CLOSED:
             break

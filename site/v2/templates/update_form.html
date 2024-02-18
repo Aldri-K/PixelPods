@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Your Information</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container"> 
+
+        <h1>PixelPods<br>Experimental Release</h1><br>
+        <h3>
+            <li>This is an experimental product considered in Alpha phase of testing</li>
+            <li>Data is stored locally and no information is uploaded anywhere other than spotify services for authentication for maximum safety of your credentials</li>
+        </h3>
+
+        <h2>Update your information</h2>
+        
+        <form method="POST">
+            WIFI SSID: <input type="text" name="wifi_ssid" value="{{ user_data[0] }}"><br>
+            WIFI Password: <input type="text" name="wifi_password" value="{{ user_data[1] }}"><br>
+            Spotify Username: <input type="text" name="spotify_username" value="{{ user_data[2] }}"><br>
+            Spotify Password: <input type="text" name="spotify_password" value="{{ user_data[3] }}"><br>
+            <input type="submit" value="Update">
+        </form>
+
+    </div>
+    
+
+</body>
+</html>

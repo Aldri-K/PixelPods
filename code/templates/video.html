@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <link href="https://vjs.zencdn.net/7.17.0/video-js.css" rel="stylesheet">
+    <script src="https://vjs.zencdn.net/7.17.0/video.js"></script>
+</head>
+<body>
+    {% block content %}
+    <div>
+        <video id="my-video" class="video-js" controls preload="auto" width="640" height="360">
+            <source src="{{ url_for('download_file', filename=video_filename) }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    {% endblock %}
+    <script>
+        var player = videojs('my-video');
+    </script>
+</body>
+</html>

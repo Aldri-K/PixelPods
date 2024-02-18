@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Information Form</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container"> 
+
+        <h1>PixelPods<br>Experimental Release</h1><br>
+        <h3>This is an experimental product considered in Alpha phase of testing<br>
+            All data is stored locally and no information is uploaded anywhere for maximum safety of your credentials</h3>
+            
+        <h2>Enter your information</h2>
+
+        <form method="POST">
+            WIFI SSID: <input type="text" name="wifi_ssid" placeholder="Enter your WIFI/Hotspot SSID"><br>
+            WIFI Password: <input type="text" name="wifi_password" placeholder="Enter your WIFI/Hotspot password"><br>
+            Spotify Username: <input type="text" name="spotify_username" placeholder="Enter your Spotify username"><br>
+            Spotify Password: <input type="text" name="spotify_password" placeholder="Enter your Spotify password"><br>
+            <input type="submit" value="Submit">
+        </form>
+        
+    </div>
+</body>
+</html>

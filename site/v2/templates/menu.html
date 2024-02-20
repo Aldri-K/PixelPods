@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h2>Menu Options</h2>
+    <div class="menu-buttons">
+        <form action="/change-wifi" method="get">
+            <input type="submit" value="Change Wi-Fi">
+        </form>
+        <form action="/change-spot" method="get">
+            <input type="submit" value="Update Spotify Details">
+        </form>
+        <form action="/display-options" method="get">
+            <input type="submit" value="Display Options">
+        </form>
+
+        
+        <!-- Checkbox for displaying base image -->
+        <form action="/toggle-base-image" method="post">
+            <input type="checkbox" id="displayBaseImage" name="displayBaseImage">
+            <label for="displayBaseImage">Do you want to display the base image?</label>
+            <input type="submit" value="Save Preference">
+        </form>
+        
+    </div>
+</div>
+</body>
+</html>

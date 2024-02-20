@@ -21,6 +21,13 @@ body {
     width: 100%;
 }
 
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adjusts the space between buttons */
+}
+
+
 h2 {
     text-align: center;
     color: #4CAF50; /* Green color for headings */

@@ -17,11 +17,14 @@
         <h2>Update your information</h2>
         
         <form method="POST">
-            WIFI SSID: <input type="text" name="wifi_ssid" value="{{ user_data[0] }}"><br>
-            WIFI Password: <input type="text" name="wifi_password" value="{{ user_data[1] }}"><br>
-            Spotify Username: <input type="text" name="spotify_username" value="{{ user_data[2] }}"><br>
-            Spotify Password: <input type="text" name="spotify_password" value="{{ user_data[3] }}"><br>
-            <input type="submit" value="Update">
+            WIFI SSID: <input type="text" name="wifi_ssid" placeholder="Enter your WIFI/Hotspot SSID"><br>
+            WIFI Password: <input type="text" name="wifi_password" placeholder="Enter your WIFI/Hotspot password"><br>
+            Spotify Username: <input type="text" name="spotify_username" placeholder="Enter your Spotify username"><br>
+            Spotify Password: <input type="text" name="spotify_password" placeholder="Enter your Spotify password"><br>
+            Spotify Client ID: <input type="text" name="spotify_client_id" placeholder="Enter your Spotify client ID"><br>
+            Spotify Client Secret: <input type="text" name="spotify_client_secret" placeholder="Enter your Spotify client secret"><br>
+            Spotify Redirect URI: <input type="text" name="spotify_redirect_uri" placeholder="Enter your Spotify reditect uri"><br>
+            <input type="submit" value="Submit">
         </form>
 
     </div>

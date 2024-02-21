@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
-from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv, set_key, dotenv_values
 import os
 
 
@@ -152,23 +152,62 @@ def change_spot():
     
 
 ##########################################################################
-@app.route('/display-options', methods=['GET', 'POST'])
-def display_options():
-    if request.method == 'POST':
-        # Handle the file upload
-        file = request.files.get('fileUpload')
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+# @app.route('/display-options', methods=['GET', 'POST'])
+# def display_options():
+#     if request.method == 'POST':
+#         # Handle the file upload
+#         file = request.files.get('fileUpload')
+#         if file and allowed_file(file.filename):
+#             filename = secure_filename(file.filename)
+#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
-        # Here you might want to save the selected display option to a session, database, etc.
-        # session['display_option'] = request.form['displayOption']
+#         # Here you might want to save the selected display option to a session, database, etc.
+#         # session['display_option'] = request.form['displayOption']
 
-    uploaded_files = os.listdir(UPLOAD_FOLDER)
-    uploaded_files = [file for file in uploaded_files if allowed_file(file)]
-    return render_template('display-options.html', uploaded_files=uploaded_files)
+#     uploaded_files = os.listdir(UPLOAD_FOLDER)
+#     uploaded_files = [file for file in uploaded_files if allowed_file(file)]
+#     return render_template('display-options.html', uploaded_files=uploaded_files)
 
+@app.route('/display-options', methods=['GET'])
+def display_options():
+    # Load existing settings if any
+    settings = dotenv_values(".env")  # Adjust path as needed
+    uploaded_files = [f for f in os.listdir(UPLOAD_FOLDER) if allowed_file(f)]
+    
+    return render_template('display-options.html', settings=settings, uploaded_files=uploaded_files)
 
+@app.route('/update-display-options', methods=['POST'])
+def update_display_options():
+    # Find the .env file or specify its path
+    
+    # Extracting form data
+    startDisplayOption = request.form.get('startDisplayOption')
+    displayOption = request.form.get('displayOption')
+    selectedFile = request.form.get('selectedFile')
+    
+    # Update .env file with the selected options
+    if startDisplayOption:
+        set_key(dotenv_path, 'START_DISPLAY_OPTION', startDisplayOption)
+    if displayOption:
+        set_key(dotenv_path, 'DISPLAY_OPTION', displayOption)
+    if selectedFile:
+        set_key(dotenv_path, 'SELECTED_FILE', selectedFile)
+    
+    flash('Display options updated successfully.', 'success')
+    return redirect(url_for('display_options'))
+
+@app.route('/upload-file', methods=['POST'])
+def upload_file():
+    # Handle file upload
+    file = request.files.get('fileUpload')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+        flash('File uploaded successfully.', 'success')
+    else:
+        flash('Invalid file or no file selected.', 'error')
+    return redirect(url_for('display_options'))
 
 ##########################################################################
 @app.route('/toggle-base-image', methods=['POST'])

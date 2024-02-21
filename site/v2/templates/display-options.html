@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Display Options</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .upload-preview {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Adjust the minmax values as needed */
-            gap: 10px; /* Space between items */
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
             padding: 10px;
         }
         .upload-preview div {
@@ -16,77 +17,60 @@
             align-items: center;
         }
         .upload-preview img {
-            width: 100%; /* Make images expand to fill their container */
-            height: 100px; /* Fixed height for uniformity, adjust as needed */
-            object-fit: cover; /* Keep aspect ratio */
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
         }
         .selected {
-            outline: 5px solid #4CAF50; /* Outline for selected item */
+            outline: 5px solid #4CAF50;
         }
     </style>
-    
 </head>
 <body>
 <div class="container">
-
     <h2>Display Options</h2>
-    <h3>Select what will be displayed on start up and when the device is waiting for an internet connection:</h3>
+    <form action="/upload-file" method="post" enctype="multipart/form-data">
+        <h3>Upload an Image/Video (Max 50MB):</h3>
+        <input type="file" id="fileUpload" name="fileUpload" accept="image/*,video/*"><br>
+        <input type="submit" value="Upload File">
+    </form>
 
-    <form method="POST" action="/display-options" enctype="multipart/form-data">
+    <form method="POST" action="/update-display-options">
+        <h3>Select the options for device start-up and its standard run mode:</h3>
         <div>
-            <input type="radio" id="spotify" name="startDisplayOption" value="spotify">
-            <label for="spotify">Spotify</label>
+            <input type="radio" id="startupSpotify" name="startDisplayOption" value="spotify">
+            <label for="startupSpotify">Spotify</label>
         </div>
         <div>
-            <input type="radio" id="baseImageVideo" name="startDisplayOption" value="baseImageVideo">
-            <label for="baseImageVideo">Uploaded Image/Video</label>
+            <input type="radio" id="startupBaseImageVideo" name="startDisplayOption" value="baseImageVideo">
+            <label for="startupBaseImageVideo">Uploaded Image/Video</label>
         </div>
         <div>
-            <input type="radio" id="connectionQR" name="startDisplayOption" value="connectionQR">
-            <label for="connectionQR">Connection QR (shows a QR code with your wifi connection details)</label>
+            <input type="radio" id="startupConnectionQR" name="startDisplayOption" value="connectionQR">
+            <label for="startupConnectionQR">Connection QR</label>
         </div>
 
+        <h3>Running Display Options:</h3>
         <div>
-            <label for="fileUpload">Upload Image/Video (Max 50MB):</label>
-            <input type="file" id="fileUpload" name="fileUpload" accept="image/*,video/*" max="52428800">
+            <input type="radio" id="runningSpotify" name="displayOption" value="spotify">
+            <label for="runningSpotify">Spotify</label><br>
+            <input type="radio" id="runningBaseImageVideo" name="displayOption" value="baseImageVideo">
+            <label for="runningBaseImageVideo">Uploaded Image/Video</label><br>
         </div>
-        <input type="submit" value="Upload">
-
-
-        <h3>What do you want displayed when device is running:</h3>
-        <div>
-            <input type="radio" id="spotify" name="displayOption" value="spotify">
-            <label for="spotify">Spotify</label>
-        </div>
-        <div>
-            <input type="radio" id="baseImageVideo" name="displayOption" value="baseImageVideo">
-            <label for="baseImageVideo">Uploaded Image/Video</label>
-        </div>
-        <input type="submit" value="Save">
+        <input type="submit" value="Save Preferences">
     </form>
 
     <h3>Uploaded Files</h3>
     <div id="uploadsPreview" class="upload-preview">
         {% for file in uploaded_files %}
-            <div>
-                <img src="{{ url_for('static', filename='user_uploads/' + file) }}" onclick="selectFile(this)" alt="Uploaded File">
-                <form action="{{ url_for('remove_file') }}" method="post">
-                    <input type="hidden" name="filename" value="{{ file }}">
-                    <input type="submit" value="Remove">
-                </form>
-            </div>
+        <div>
+            <img src="{{ url_for('static', filename='user_uploads/' + file) }}" alt="Uploaded File" onclick="selectFile(this, '{{ file }}')">
+        </div>
         {% endfor %}
     </div>
-    
 
-    <form action="/menu" method="get">
-        <input type="submit" value="Return to Menu">
-    </form>
-
-</div>
-
-<script>
-    function selectFile(imgElement) {
+    <script>
+    function selectFile(imgElement, filename) {
         // Remove 'selected' class from all images
         document.querySelectorAll('.upload-preview img').forEach(img => {
             img.classList.remove('selected');
@@ -95,6 +79,8 @@
         // Add 'selected' class to clicked image
         imgElement.classList.add('selected');
     }
-    </script>
+</script>
+
+</div>
 </body>
 </html>

@@ -65,18 +65,23 @@
         <!-- Hidden input for selected image -->
         <input type="hidden" id="selectedFile" name="selectedFile" value="">
 
+            <!-- Uploaded Files Preview -->
+        <h3>Uploaded Files</h3>
+        <div id="uploadsPreview" class="upload-preview">
+            {% for file in uploaded_files %}
+            <div>
+                <img src="{{ url_for('static', filename='user_uploads/' + file) }}" alt="Uploaded File" onclick="selectFile(this, '{{ file }}')">
+            </div>
+            {% endfor %}
+        </div>
+
         <input type="submit" value="Save Preferences">
     </form>
 
-    <!-- Uploaded Files Preview -->
-    <h3>Uploaded Files</h3>
-    <div id="uploadsPreview" class="upload-preview">
-        {% for file in uploaded_files %}
-        <div>
-            <img src="{{ url_for('static', filename='user_uploads/' + file) }}" alt="Uploaded File" onclick="selectFile(this, '{{ file }}')">
-        </div>
-        {% endfor %}
-    </div>
+    <br>   
+        <form action="/menu" method="get">
+            <input type="submit" value="Return to Menu">
+        </form>
 </div>
 
 <script>
@@ -92,5 +97,7 @@
         document.getElementById('selectedFile').value = filename;
     }
 </script>
+
+
 </body>
 </html>

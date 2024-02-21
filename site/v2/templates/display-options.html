@@ -20,6 +20,7 @@
             width: 100px;
             height: 100px;
             object-fit: cover;
+            cursor: pointer;
         }
         .selected {
             outline: 5px solid #4CAF50;
@@ -29,12 +30,15 @@
 <body>
 <div class="container">
     <h2>Display Options</h2>
+
+    <!-- File Upload Form -->
     <form action="/upload-file" method="post" enctype="multipart/form-data">
         <h3>Upload an Image/Video (Max 50MB):</h3>
         <input type="file" id="fileUpload" name="fileUpload" accept="image/*,video/*"><br>
         <input type="submit" value="Upload File">
     </form>
 
+    <!-- Display Options Form -->
     <form method="POST" action="/update-display-options">
         <h3>Select the options for device start-up and its standard run mode:</h3>
         <div>
@@ -57,9 +61,14 @@
             <input type="radio" id="runningBaseImageVideo" name="displayOption" value="baseImageVideo">
             <label for="runningBaseImageVideo">Uploaded Image/Video</label><br>
         </div>
+
+        <!-- Hidden input for selected image -->
+        <input type="hidden" id="selectedFile" name="selectedFile" value="">
+
         <input type="submit" value="Save Preferences">
     </form>
 
+    <!-- Uploaded Files Preview -->
     <h3>Uploaded Files</h3>
     <div id="uploadsPreview" class="upload-preview">
         {% for file in uploaded_files %}
@@ -68,19 +77,20 @@
         </div>
         {% endfor %}
     </div>
+</div>
 
-    <script>
+<script>
     function selectFile(imgElement, filename) {
-        // Remove 'selected' class from all images
         document.querySelectorAll('.upload-preview img').forEach(img => {
             img.classList.remove('selected');
         });
     
         // Add 'selected' class to clicked image
         imgElement.classList.add('selected');
+        
+        // Update hidden input with the filename of the selected image
+        document.getElementById('selectedFile').value = filename;
     }
 </script>
-
-</div>
 </body>
 </html>

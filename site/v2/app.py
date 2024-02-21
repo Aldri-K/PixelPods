@@ -168,6 +168,7 @@ def change_spot():
 #     uploaded_files = [file for file in uploaded_files if allowed_file(file)]
 #     return render_template('display-options.html', uploaded_files=uploaded_files)
 
+##########################################################################
 @app.route('/display-options', methods=['GET'])
 def display_options():
     # Load existing settings if any
@@ -176,6 +177,7 @@ def display_options():
     
     return render_template('display-options.html', settings=settings, uploaded_files=uploaded_files)
 
+##########################################################################
 @app.route('/update-display-options', methods=['POST'])
 def update_display_options():
     # Find the .env file or specify its path
@@ -195,6 +197,9 @@ def update_display_options():
     
     flash('Display options updated successfully.', 'success')
     return redirect(url_for('display_options'))
+
+
+##########################################################################
 
 @app.route('/upload-file', methods=['POST'])
 def upload_file():

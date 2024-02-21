@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Information Form</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container"> 
+
+        <h1>PixelPods<br>Experimental Release</h1><br>
+        <h3>This is an experimental product considered in Alpha phase of testing<br>
+            All data is stored locally and no information is uploaded anywhere for maximum safety of your credentials</h3>
+            
+        <h2>Enter your information</h2>
+
+        <form method="POST">
+            Spotify Username: <input type="text" name="spotify_username" placeholder="Enter your Spotify username"><br>
+            Spotify Password: <input type="text" name="spotify_password" placeholder="Enter your Spotify password"><br>
+            Spotify Client ID: <input type="text" name="spotify_client_id" placeholder="Enter your Spotify client ID"><br>
+            Spotify Client Secret: <input type="text" name="spotify_client_secret" placeholder="Enter your Spotify client secret"><br>
+            Spotify Redirect URI: <input type="text" name="spotify_redirect_uri" placeholder="Enter your Spotify reditect uri"><br>
+            <input type="submit" value="Save">
+        </form>
+
+        <br>
+        <form action="/menu" method="get">
+            <input type="submit" value="Return to Menu">
+        </form>
+        <br>   
+        <form action="/logout" method="get">
+            <input type="submit" value="Logout">
+        </form>
+        
+    </div>
+</body>
+</html>

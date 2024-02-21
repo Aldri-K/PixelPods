@@ -7,6 +7,7 @@ wifi = os.getenv('wifi_ssid', '')
 wifi_pass = os.getenv('wifi_password', '')
 print(wifi,wifi_pass)
 img = qrcode.make(f'''
+To connect to device:
 Turn on Hotspot 
 or
 Change your hotspot to:

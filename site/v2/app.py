@@ -4,7 +4,7 @@ import os
 
 
 from werkzeug.utils import secure_filename
-UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__))+'\\static\\user_uploads'
+UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__))+'//static//user_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'mp4', 'avi'}
 
 
@@ -234,78 +234,3 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# @app.route('/', methods=['GET', 'POST'])
-# def form():
-
-#     if 'logged_in' not in session or not session['logged_in']:
-#         return redirect(url_for('login'))
-    
-
-#     if request.method == 'POST':
-#         user_info = {
-#             'wifi_ssid' : request.form['wifi_ssid'],
-#             'wifi_password' : request.form['wifi_password'],
-#             'spotify_username' : request.form['spotify_username'],
-#             'spotify_password' : request.form['spotify_password'],
-#             'spotify_client_secret' : request.form['spotify_client_secret'],
-#             'spotify_client_id' : request.form['spotify_client_id'],
-#             'spotify_redirect_uri' : request.form['spotify_redirect_uri']
-#         }
-        
-#         # Save the information to the .env file
-#         for key, value in user_info.items():
-#             set_key(dotenv_path, key, value)
-        
-#         return redirect(url_for('update'))
-    
-#     return render_template('form.html')
-
-# @app.route('/update', methods=['GET', 'POST'])
-# def update():
-
-#     if 'logged_in' not in session or not session['logged_in']:
-#         return redirect(url_for('login'))
-
-#     if request.method == 'POST':
-#         user_info = {
-#             'wifi_ssid' : request.form['wifi_ssid'],
-#             'wifi_password' : request.form['wifi_password'],
-#             'spotify_username' : request.form['spotify_username'],
-#             'spotify_password' : request.form['spotify_password'],
-#             'spotify_client_secret' : request.form['spotify_client_secret'],
-#             'spotify_client_id' : request.form['spotify_client_id'],
-#             'spotify_redirect_uri' : request.form['spotify_redirect_uri']
-#         }
-        
-#         # Update the information in the .env file
-#         for key, value in user_info.items():
-#             set_key(dotenv_path, key, value)
-        
-#         return 'Information Updated Successfully!'
-    
-#     # Load the existing user data to pre-fill the form
-#     user_data = {
-#         'wifi_ssid' : os.getenv('wifi_ssid', ''),
-#         'wifi_password': os.getenv('wifi_password', ''),
-#         'username': os.getenv('spotify_username', ''),
-#         'spotify_username': os.getenv('spotify_password', ''),
-#         'spotify_client_secret': os.getenv('spotify_client_secret', ''),
-#         'spotify_client_id': os.getenv('spotify_client_id', ''),
-#         'spotify_redirect_uri': os.getenv('spotify_redirect_uri', '')
-#     }
-    
-#     return render_template('update_form.html', user_data=user_data)

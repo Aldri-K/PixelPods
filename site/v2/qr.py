@@ -2,7 +2,7 @@ import qrcode
 from dotenv import load_dotenv
 import os
 
-load_dotenv(dotenv_path = '.env')
+load_dotenv()
 wifi = os.getenv('wifi_ssid', '')
 wifi_pass = os.getenv('wifi_password', '')
 print(wifi,wifi_pass)

@@ -69,7 +69,7 @@ def download_canvas_video(track_name, track_link):
         return None
 
 def display_image_with_fbi(image_path):
-    subprocess.run(['sudo','fbi', '-T', '1', '-d', '/dev/fb0', '--noverbose', '--autozoom', image_path])
+    subprocess.run(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', image_path])
 
 last_track_id = None
 while True:

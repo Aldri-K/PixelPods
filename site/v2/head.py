@@ -56,6 +56,7 @@ def main_app_mode():
   
 
 def start_up():
+    subprocess.run(['sudo','python3',os.path.dirname(os.path.realpath(__file__))+"/app.py"])
     qr.qr_gen()
     if START_DISPLAY_OPTION == "connectionQR":
         # subprocess.run(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', qrImage, '&', 'sleep', '5', ';', 'killall', 'fbi'])

@@ -1,7 +1,7 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from dotenv import load_dotenv, set_key, dotenv_values
 import os
-
+import subprocess
 
 from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = os.path.dirname(os.path.abspath(__file__))+'//static//user_uploads'
@@ -226,6 +226,12 @@ def toggle_base_image():
     print(f"Display base image: {display_base_image}")  # Placeholder action
 
     return redirect(url_for('menu'))
+
+##########################################################################
+@app.route('/reboot', methods=['GET'])
+def toggle_base_image():
+    subprocess.run(['sudo','reboot'])
+    return "rebooting device"
 
 
 ##########################################################################

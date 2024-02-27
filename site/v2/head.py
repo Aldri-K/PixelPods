@@ -11,7 +11,7 @@ START_DISPLAY_OPTION= os.getenv("START_DISPLAY_OPTION")
 DISPLAY_OPTION=os.getenv("DISPLAY_OPTION")
 SELECTED_FILE= os.getenv("SELECTED_FILE")
 
-qrImage = "qr.png"
+qrImage = os.path.dirname(os.path.realpath(__file__))+"/qr.png"
 baseImageVideo = os.path.dirname(os.path.realpath(__file__))+"/static/user_uploads/"+ SELECTED_FILE
 
 def check_file_type(file_path):
@@ -52,7 +52,7 @@ def main_app_mode():
         
         
     elif DISPLAY_OPTION == "spotify":
-        subprocess.run(['sudo','python3','app.py'])
+        subprocess.run(['sudo','python3','fbi_vlc.py'])
   
 
 def start_up():

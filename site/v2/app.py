@@ -27,7 +27,7 @@ Session(app)
 
 load_dotenv()
 # Assuming the .env file is in the same directory as this script
-dotenv_path = '.env'
+dotenv_path = os.path.dirname(os.path.abspath(__file__))+"//.env"
 
 
 # The correct password for demonstration purposes

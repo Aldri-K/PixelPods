@@ -4,6 +4,7 @@ import subprocess
 from dotenv import load_dotenv
 import mimetypes
 import vlc
+import qr
 
 load_dotenv()
 START_DISPLAY_OPTION= os.getenv("START_DISPLAY_OPTION")
@@ -30,7 +31,7 @@ def check_file_type(file_path):
 
 
 def play_video_in_vlc(video_path):
-    subprocess.run(['/home/rdk/Downloads/PixelPods/site/v2/videoplay.sh'])
+    subprocess.Popen(['/home/rdk/Downloads/PixelPods/site/v2/videoplay.sh', baseImageVideo])
 
 
 
@@ -55,6 +56,7 @@ def main_app_mode():
   
 
 def start_up():
+    qr.qr_gen()
     if START_DISPLAY_OPTION == "connectionQR":
         # subprocess.run(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', qrImage, '&', 'sleep', '5', ';', 'killall', 'fbi'])
         # Start the fbi process to display the image

@@ -15,6 +15,7 @@ qrImage = os.path.dirname(os.path.realpath(__file__))+"/qr.png"
 baseImageVideo = os.path.dirname(os.path.realpath(__file__))+"/static/user_uploads/"+ SELECTED_FILE
 
 def check_file_type(file_path):
+    print("in checfile")
     mime_type, _ = mimetypes.guess_type(file_path)
     
     if mime_type:
@@ -31,12 +32,13 @@ def check_file_type(file_path):
 
 
 def play_video_in_vlc(video_path):
-    subprocess.Popen(['/home/rdk/Downloads/PixelPods/site/v2/videoplay.sh', baseImageVideo])
+    print("in playvideo")
+    subprocess.Popen([os.path.dirname(os.path.realpath(__file__))+'/videoplay.sh', baseImageVideo])
 
 
 
 def main_app_mode():
-
+    print("in mainappmode")
     if DISPLAY_OPTION == "baseImageVideo":
         mime_type, _ = mimetypes.guess_type(baseImageVideo)
     
@@ -56,26 +58,39 @@ def main_app_mode():
   
 
 def start_up():
-    subprocess.run(['sudo','python3',os.path.dirname(os.path.realpath(__file__))+"/app.py"])
+    print("in start up")
+    # subprocess.run(['sudo','python3',os.path.dirname(os.path.realpath(__file__))+"/app.py"])
     qr.qr_gen()
     if START_DISPLAY_OPTION == "connectionQR":
         # subprocess.run(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', qrImage, '&', 'sleep', '5', ';', 'killall', 'fbi'])
         # Start the fbi process to display the image
-        fbi_process = subprocess.Popen(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', qrImage], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        try:
+            fbi_process = subprocess.Popen(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', qrImage], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-        # Wait for the specified display time
-        time.sleep(5)
+            # Wait for the specified display time
+            time.sleep(5)
 
-        # Kill the fbi process to stop displaying the image
-        fbi_process.terminate()
-        # Optionally, ensure the fbi process is killed if terminate doesn't work
-        subprocess.run(['sudo','killall', 'fbi'])
-        main_app_mode()
+            # Kill the fbi process to stop displaying the images
+            fbi_process.terminate()
+            # Optionally, ensure the fbi process is killed if terminate doesn't work
+            subprocess.run(['sudo','killall', 'fbi'])
+        except:
+            print("error displaying connectionQR")
+        # main_app_mode()
     elif START_DISPLAY_OPTION == "baseImageVideo":
-        subprocess.run(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', baseImageVideo])
-        main_app_mode()
+        try:
+
+            fbi_process = subprocess.run(['sudo','fbi', '-T', '10', '-d', '/dev/fb0', '--noverbose', '--autozoom', baseImageVideo])
+            time.sleep(5)
+            # Kill the fbi process to stop displaying the image
+            fbi_process.terminate()
+            subprocess.run(['sudo','killall', 'fbi'])
+        except:
+            print("error displaying baseimagevideo")
+        # main_app_mode()
     elif START_DISPLAY_OPTION == "spotify":
         print("spot")
-        main_app_mode()
+    
+    main_app_mode()
 
 start_up()

@@ -229,9 +229,9 @@ def toggle_base_image():
 
 ##########################################################################
 @app.route('/reboot', methods=['GET'])
-def toggle_base_image():
+def reboot():
     subprocess.run(['sudo','reboot'])
-    return "rebooting device"
+    return redirect(url_for('menu'))
 
 
 ##########################################################################
